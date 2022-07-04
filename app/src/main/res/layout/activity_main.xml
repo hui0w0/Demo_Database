@@ -22,7 +22,7 @@
             android:inputType="textPersonName" />
 
         <EditText
-            android:id="@+id/editTextTextDate"
+            android:id="@+id/editTextDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0"
@@ -58,7 +58,7 @@
         android:layout_weight="1" />
 
     <ListView
-        android:id="@+id/lv"
+        android:id="@+id/lvResults"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1" />

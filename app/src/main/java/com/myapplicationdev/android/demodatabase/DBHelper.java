@@ -11,7 +11,6 @@ import android.util.Log;
 import java.util.ArrayList;
 
 public class DBHelper extends SQLiteOpenHelper {
-
     private static final int DATABASE_VER = 1;
     private static final String DATABASE_NAME = "tasks.db";
 
@@ -35,78 +34,71 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int
-            newVersion) {
+    public void onUpgrade(SQLiteDatabase db, int i, int i1) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TASK);
         onCreate(db);
     }
-
     public void insertTask(String description, String date){
-
-        // Get an instance of the database for writing
         SQLiteDatabase db = this.getWritableDatabase();
-        // We use ContentValues object to store the values for
-        //  the db operation
         ContentValues values = new ContentValues();
-        // Store the column name as key and the description as value
         values.put(COLUMN_DESCRIPTION, description);
-        // Store the column name as key and the date as value
         values.put(COLUMN_DATE, date);
-        // Insert the row into the TABLE_TASK
         db.insert(TABLE_TASK, null, values);
-        // Close the database connection
         db.close();
     }
     public ArrayList<String> getTaskContent() {
-        // Create an ArrayList that holds String objects
         ArrayList<String> tasks = new ArrayList<String>();
-        // Select all the tasks' description
         String selectQuery = "SELECT " + COLUMN_DESCRIPTION
                 + " FROM " + TABLE_TASK;
-
-        // Get the instance of database to read
         SQLiteDatabase db = this.getReadableDatabase();
-        // Run the SQL query and get back the Cursor object
         Cursor cursor = db.rawQuery(selectQuery, null);
-
-        // moveToFirst() moves to first row, null if no records
         if (cursor.moveToFirst()) {
             do {
                 tasks.add(cursor.getString(0));
             } while (cursor.moveToNext());
         }
-        // Close connection
         cursor.close();
         db.close();
 
         return tasks;
     }
-    public ArrayList<Task> getTasks() {
+    public ArrayList<Task> getTasks(boolean asc) {
         ArrayList<Task> tasks = new ArrayList<Task>();
-        String selectQuery = "SELECT " + COLUMN_ID + ", "
-                + COLUMN_DESCRIPTION + ", "
-                + COLUMN_DATE
-                + " FROM " + TABLE_TASK;
+        String selectQuery="SELECT "+COLUMN_ID+","+COLUMN_DESCRIPTION+","+COLUMN_DATE+" FROM "+TABLE_TASK+" ORDER BY "+COLUMN_DESCRIPTION;
+        if (asc){
+            selectQuery+=" ASC";
 
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
+            SQLiteDatabase db = this.getReadableDatabase();
+            Cursor cursor = db.rawQuery(selectQuery, null);
 
-        if (cursor.moveToFirst()) {
-            do {
-                int id = cursor.getInt(0);
-                String description = cursor.getString(1);
-                String date = cursor.getString(2);
-                Task obj = new Task(id, description, date);
-                tasks.add(obj);
-            } while (cursor.moveToNext());
+            if (cursor.moveToFirst()) {
+                do {
+                    int id = cursor.getInt(0);
+                    String description = cursor.getString(1);
+                    String date = cursor.getString(2);
+                    Task obj = new Task(id, description, date);
+                    tasks.add(obj);
+                } while (cursor.moveToNext());
+            }
         }
-        cursor.close();
-        db.close();
-        return tasks;
-    }
-    public ArrayList<Task> getTasks(boolean asc){
-        ArrayList<Task>tasks = new ArrayList<Task>();
-        String selectQuery = "SELECT + COLUMN";
+        else {
+            selectQuery += " DESC";
+
+            SQLiteDatabase db = this.getReadableDatabase();
+            Cursor cursor = db.rawQuery(selectQuery, null);
+
+            if (cursor.moveToFirst()) {
+                do {
+                    int id = cursor.getInt(0);
+                    String description = cursor.getString(1);
+                    String date = cursor.getString(2);
+                    Task obj = new Task(id, description, date);
+                    tasks.add(obj);
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+            db.close();
+        }
         return tasks;
     }
 }
